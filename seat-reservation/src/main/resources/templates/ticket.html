@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Biletiniz Hazır!</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: #2c3e50;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .ticket {
+            background-color: #fff;
+            width: 600px;
+            height: 250px;
+            border-radius: 10px;
+            display: flex;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sol Taraf (Poster gibi) */
+        .left {
+            width: 200px;
+            background-color: #e67e22;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-right: 2px dashed #333;
+        }
+
+        .left h2 { font-size: 60px; margin: 0; }
+        .left span { font-size: 14px; margin-top: 10px; text-transform: uppercase; }
+
+        /* Sağ Taraf (Detaylar) */
+        .right {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        .movie-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .label { color: #7f8c8d; font-size: 12px; }
+        .value { font-weight: bold; font-size: 16px; }
+
+        .barcode {
+            height: 40px;
+            background: repeating-linear-gradient(
+                90deg,
+                #333 0px, #333 2px,
+                transparent 2px, transparent 4px
+            );
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        .home-btn {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-decoration: none;
+            background: #27ae60;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div style="position: relative;">
+        <div class="ticket">
+            <div class="left">
+                <h2 th:text="${seatNumber}">A1</h2>
+                <span>Koltuk No</span>
+            </div>
+            
+            <div class="right">
+                <div class="movie-title" th:text="${movieName}">FILM ADI</div>
+                
+                <div class="info-row">
+                    <div>
+                        <div class="label">SAYIN</div>
+                        <div class="value" th:text="${customerName}">Ad Soyad</div>
+                    </div>
+                    <div>
+                        <div class="label">TARİH</div>
+                        <div class="value">05 ŞUBAT 2026</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div>
+                        <div class="label">SALON</div>
+                        <div class="value">IMAX 1</div>
+                    </div>
+                    <div>
+                        <div class="label">ÜCRET</div>
+                        <div class="value" th:text="${price}">100 TL</div>
+                    </div>
+                </div>
+
+                <div class="barcode"></div>
+            </div>
+        </div>
+
+        <br>
+        <center>
+            <a href="/" style="color: #ecf0f1; font-family: sans-serif; text-decoration: none;">⬅️ Yeni Bilet Al</a>
+        </center>
+    </div>
+
+</body>
+</html>

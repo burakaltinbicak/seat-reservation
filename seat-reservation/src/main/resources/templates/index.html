@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cinema Seat Reservation</title>
+    <meta charset="UTF-8">
+    <style>
+        /* --- STİL (Aynı Kalıyor) --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 { margin-bottom: 20px; text-shadow: 2px 2px 4px #000; }
+
+        .screen {
+            background-color: #fff;
+            height: 70px;
+            width: 300px;
+            margin: 15px auto;
+            transform: rotateX(-45deg);
+            box-shadow: 0 3px 20px rgba(255,255,255,0.7);
+            color: #333;
+            line-height: 70px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            border-radius: 10px;
+        }
+
+        .container { perspective: 1000px; margin-bottom: 30px; }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .seat {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px 12px 8px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .seat:hover { transform: scale(1.1); }
+
+        .available { background-color: #2ecc71; color: white; }
+        .reserved { background-color: #e74c3c; color: white; cursor: not-allowed; opacity: 0.6; }
+        .selected { background-color: #f1c40f; color: #2c3e50; transform: scale(1.1); border: 2px solid white;}
+
+        .form-panel {
+            background-color: #34495e;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: none;
+            background: #ecf0f1;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background-color: #e67e22;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover { background-color: #d35400; }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(0,0,0,0.2);
+            font-weight: bold;
+            color: #f1c40f;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎬 BABU SİNEMALARI</h1>
+
+    <div class="container">
+        <div class="screen">PERDE</div>
+        
+        <div class="seat-grid">
+            <div th:each="seat : ${seats}" 
+                 th:text="${seat.seatNumber}"
+                 class="seat"
+                 th:classappend="${seat.reserved} ? 'reserved' : 'available'"
+                 th:data-seat="${seat.seatNumber}"
+                 th:data-reserved="${seat.reserved}"
+                 onclick="handleSeatClick(this)">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-panel">
+        <h3 id="statusText">Lütfen bir koltuk seçin</h3>
+        
+        <form action="/reserve" method="post">
+            <input type="text" id="seatInput" name="seatNumber" placeholder="Koltuk No" required readonly>
+            <input type="text" name="customerName" placeholder="Adınız Soyadınız" required>
+            <button type="submit">Bileti Al 🎟️</button>
+        </form>
+
+        <div class="message" th:if="${message}" th:text="${message}"></div>
+    </div>
+
+    <script>
+        function handleSeatClick(element) {
+            // Verileri HTML'in içinden güvenli şekilde alıyoruz
+            var seatNumber = element.getAttribute("data-seat");
+            var isReserved = element.getAttribute("data-reserved") === "true";
+
+            if (isReserved) {
+                alert("Bu koltuk dolu babu! Başkasını seç.");
+                return;
+            }
+
+            // Önceki seçili olanı temizle
+            document.querySelectorAll('.seat.selected').forEach(s => {
+                s.classList.remove('selected');
+            });
+
+            // Tıklananı seç
+            element.classList.add('selected');
+
+            // Kutuya yaz
+            document.getElementById('seatInput').value = seatNumber;
+            document.getElementById('statusText').innerText = seatNumber + " Seçildi";
+        }
+    </script>
+
+</body>
+</html>
