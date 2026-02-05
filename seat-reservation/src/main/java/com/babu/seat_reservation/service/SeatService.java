@@ -68,4 +68,31 @@ public class SeatService {
             System.out.println("Demo verileri yüklendi: 15 Koltuk oluşturuldu.");
         }
     }
+
+    // --- YENİ EKLENEN KISIM: İSTATİSTİK VE TEMİZLİK ---
+
+    // 1. Dolu koltuk sayısını getir
+    public long getReservedCount() {
+        return seatRepository.findByIsReservedTrue().size();
+    }
+
+    // 2. Toplam hasılatı hesapla
+    public double getTotalIncome() {
+        List<Seat> soldSeats = seatRepository.findByIsReservedTrue();
+        double total = 0;
+        for (Seat seat : soldSeats) {
+            total += seat.getPrice();
+        }
+        return total;
+    }
+
+    // 3. TÜM KOLTUKLARI BOŞALT (Reset)
+    public void resetAllSeats() {
+        List<Seat> allSeats = seatRepository.findAll();
+        for (Seat seat : allSeats) {
+            seat.setReserved(false);
+            seat.setReservedBy(null);
+        }
+        seatRepository.saveAll(allSeats);
+    }
 }

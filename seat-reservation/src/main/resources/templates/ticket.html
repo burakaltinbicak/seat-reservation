@@ -1,129 +1,330 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Biletiniz Hazır!</title>
+    <title>Babu Cinemas | Access Granted</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --gold-primary: #FFD700;
+            --gold-dark: #8B6508;
+            --void-bg: #050505;
+            --glass-card: rgba(15, 15, 15, 0.85);
+            --neon-glow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
         body {
-            background-color: #2c3e50;
-            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--void-bg);
+            font-family: 'Rajdhani', sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
+            color: white;
         }
 
-        .ticket {
-            background-color: #fff;
-            width: 600px;
-            height: 250px;
-            border-radius: 10px;
+        /* --- ARKA PLAN (PARTICLE CANVAS) --- */
+        #void-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        /* --- ANA KONTEYNER --- */
+        .ticket-wrapper {
+            perspective: 1500px;
+            animation: floatTicket 6s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes floatTicket {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-15px) rotateX(2deg); }
+        }
+
+        /* --- BİLET KARTI --- */
+        .ticket-card {
+            width: 750px;
+            height: 300px;
+            background: var(--glass-card);
+            border: 2px solid var(--gold-primary);
+            border-radius: 20px;
             display: flex;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9), 
+                        0 0 30px rgba(255, 215, 0, 0.2),
+                        inset 0 0 50px rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
         }
 
-        /* Sol Taraf (Poster gibi) */
-        .left {
-            width: 200px;
-            background-color: #e67e22;
-            color: white;
+        .ticket-card:hover {
+            transform: scale(1.02) rotateX(5deg);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+
+        /* --- SOL TARAF (STUB/KOLTUK) --- */
+        .stub {
+            width: 250px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: #050505;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-right: 2px dashed #333;
+            border-right: 3px dashed #000;
+            position: relative;
         }
 
-        .left h2 { font-size: 60px; margin: 0; }
-        .left span { font-size: 14px; margin-top: 10px; text-transform: uppercase; }
+        .stub::after {
+            content: '';
+            position: absolute;
+            right: -1.5px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: rgba(0,0,0,0.3); /* Kesik çizgi gölgesi */
+        }
 
-        /* Sağ Taraf (Detaylar) */
-        .right {
+        .stub h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.4);
+        }
+
+        .stub span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 5px;
+            margin-top: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        /* --- SAĞ TARAF (DETAYLAR) --- */
+        .content {
             flex: 1;
-            padding: 30px;
+            padding: 30px 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            color: #333;
+            position: relative;
         }
 
-        .movie-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .label { color: #7f8c8d; font-size: 12px; }
-        .value { font-weight: bold; font-size: 16px; }
+        /* Arka plan logosu (Silik) */
+        .content::before {
+            content: 'BABU';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-family: 'Orbitron';
+            font-size: 8rem;
+            color: rgba(255, 215, 0, 0.05);
+            z-index: 0;
+            pointer-events: none;
+        }
 
+        .movie-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            z-index: 1;
+            border-bottom: 1px solid rgba(255,215,0,0.3);
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            z-index: 1;
+            margin-top: 10px;
+        }
+
+        .data-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .label {
+            color: #888;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+        }
+
+        /* --- BARCODE --- */
         .barcode {
-            height: 40px;
+            height: 35px;
             background: repeating-linear-gradient(
                 90deg,
-                #333 0px, #333 2px,
-                transparent 2px, transparent 4px
+                var(--gold-primary) 0px, var(--gold-primary) 2px,
+                transparent 2px, transparent 5px,
+                var(--gold-primary) 5px, var(--gold-primary) 6px
             );
-            margin-top: 20px;
-            opacity: 0.8;
+            opacity: 0.7;
+            margin-top: auto;
+            position: relative;
         }
 
-        .home-btn {
+        .barcode::after {
+            content: 'VALIDATED';
             position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            text-decoration: none;
-            background: #27ae60;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-family: sans-serif;
-            font-weight: bold;
+            right: 0;
+            top: -15px;
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+            letter-spacing: 3px;
         }
+
+        /* --- BUTON --- */
+        .home-btn {
+            margin-top: 40px;
+            text-decoration: none;
+            color: var(--gold-primary);
+            font-family: 'Orbitron';
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: 1px solid var(--gold-primary);
+            padding: 15px 40px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .home-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
+            box-shadow: 0 0 30px var(--gold-primary);
+        }
+
     </style>
 </head>
 <body>
 
-    <div style="position: relative;">
-        <div class="ticket">
-            <div class="left">
-                <h2 th:text="${seatNumber}">A1</h2>
-                <span>Koltuk No</span>
+    <canvas id="void-canvas"></canvas>
+
+    <div class="ticket-wrapper">
+        <div class="ticket-card">
+            <div class="stub">
+                <h2 th:text="${seatNumber}">C4</h2>
+                <span>SEAT</span>
             </div>
             
-            <div class="right">
-                <div class="movie-title" th:text="${movieName}">FILM ADI</div>
+            <div class="content">
+                <div class="movie-title" th:text="${movieName}">INTERSTELLAR</div>
                 
-                <div class="info-row">
-                    <div>
-                        <div class="label">SAYIN</div>
-                        <div class="value" th:text="${customerName}">Ad Soyad</div>
+                <div class="info-grid">
+                    <div class="data-group">
+                        <span class="label">OWNER</span>
+                        <span class="value" th:text="${customerName}">JOHN DOE</span>
                     </div>
-                    <div>
-                        <div class="label">TARİH</div>
-                        <div class="value">05 ŞUBAT 2026</div>
+                    <div class="data-group">
+                        <span class="label">DATE</span>
+                        <span class="value">05 FEB 2026</span>
                     </div>
-                </div>
-
-                <div class="info-row">
-                    <div>
-                        <div class="label">SALON</div>
-                        <div class="value">IMAX 1</div>
+                    <div class="data-group">
+                        <span class="label">HALL</span>
+                        <span class="value">IMAX GOLD</span>
                     </div>
-                    <div>
-                        <div class="label">ÜCRET</div>
-                        <div class="value" th:text="${price}">100 TL</div>
+                    <div class="data-group">
+                        <span class="label">PRICE</span>
+                        <span class="value" th:text="${price}">250 TL</span>
                     </div>
                 </div>
 
                 <div class="barcode"></div>
             </div>
         </div>
-
-        <br>
-        <center>
-            <a href="/" style="color: #ecf0f1; font-family: sans-serif; text-decoration: none;">⬅️ Yeni Bilet Al</a>
-        </center>
     </div>
+
+    <a href="/" class="home-btn">RETURN TO LOBBY</a>
+
+    <script>
+        // --- THE GOLDEN VOID ENGINE (Basitleştirilmiş Arka Plan) ---
+        const canvas = document.getElementById('void-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = `rgba(255, 215, 0, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+    </script>
 
 </body>
 </html>
